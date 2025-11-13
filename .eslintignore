@@ -1,0 +1,2 @@
+# Ignore backend entry so frontend linter doesn't complain
+src/index.ts
