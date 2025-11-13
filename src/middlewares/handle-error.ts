@@ -1,4 +1,4 @@
-export function handleError(err: any, req: any, res: any) {
+export function handleError(err: any, _req: any, res: any) {
   // Minimal error handler stub used by HyperExpress set_error_handler
   try {
     // If response object has a status/send methods, attempt to respond
