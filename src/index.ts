@@ -6,10 +6,10 @@
 // code (require/imports, Node globals) does not produce editor errors.
 
 require("@dotenvx/dotenvx").config();
-import cors from "./cors";
 import HyperExpress from "hyper-express";
-import { bodyParserForGET } from "./middlewares/body-parser-get";
+import cors from "./cors";
 import { registerRoutes } from "./routers";
+import { bodyParserForGET } from "./middlewares/body-parser-get";
 import { handleError } from "./middlewares/handle-error";
 
 const webserver = new HyperExpress.Server({ max_body_length: 1024 * 1024 * 3 });
