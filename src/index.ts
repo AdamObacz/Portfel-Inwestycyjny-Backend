@@ -11,6 +11,9 @@ import cors from "./cors";
 import { registerRoutes } from "./routers";
 import { bodyParserForGET } from "./middlewares/body-parser-get";
 import { handleError } from "./middlewares/handle-error";
+import sessionMiddleware from "./middlewares/session";
+import cookieParserMiddleware from "./middlewares/cookie-parser";
+import "./config/database"; // Initialize database
 
 const webserver = new HyperExpress.Server({ max_body_length: 1024 * 1024 * 3 });
 
@@ -28,6 +31,10 @@ webserver.use(
     },
   })
 );
+
+// Apply middleware
+webserver.use(cookieParserMiddleware);
+webserver.use(sessionMiddleware);
 
 // webserver.use(i18nMiddleware);
 
