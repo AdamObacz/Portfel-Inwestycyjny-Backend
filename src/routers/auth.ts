@@ -20,7 +20,12 @@ router.post("/register", async (req: any, res: any) => {
       return res.status(400).json({ error: "Email and password are required" });
     }
 
-    const user = await AuthService.register(email, password, firstName, lastName);
+    const user = await AuthService.register(
+      email,
+      password,
+      firstName,
+      lastName
+    );
 
     // Set session
     if (req.session) {
@@ -46,6 +51,8 @@ router.post("/register", async (req: any, res: any) => {
 // POST /auth/login
 router.post("/login", async (req: any, res: any) => {
   try {
+    //Doinstlauj sobię biblioteke do walidacji i DTO. Na przykład zod. Ogólnie zoda polecam bo ma wszystko czego będziesz potrzebował.
+    //Wtedy zamiast walidować tutaj (potem będzie tego więcej) to zrobisz DTO i wrzucisz to do zoda, on Ci zwróci błąd jak coś nie będzie pasowało
     const { email, password } = req.body;
 
     if (!email || !password) {

@@ -3,11 +3,19 @@ import { AppDataSource } from "../config/database";
 import { User } from "../entities/User";
 
 const userRepository = AppDataSource.getRepository(User);
-
+//Nie ma sensu robić tego jako klasy, jeżeli wszystkie metody są static.
+//Klasy są git do dependency injection, ale dependency injection zakłada, że będziesz miał instancje klasy.
 export class AuthService {
-  static async register(email: string, password: string, firstName?: string, lastName?: string) {
+  static async register(
+    email: string,
+    password: string,
+    firstName?: string,
+    lastName?: string
+  ) {
     // Check if user already exists
     const existingUser = await userRepository.findOne({ where: { email } });
+
+    //Kazdy error powinien bvyc CustomErrorem, czyli jakas klasa dodatkowa common, z kodami itp.
     if (existingUser) {
       throw new Error("User with this email already exists");
     }
@@ -25,7 +33,12 @@ export class AuthService {
     });
 
     await userRepository.save(user);
-    return { id: user.id, email: user.email, firstName: user.firstName, lastName: user.lastName };
+    return {
+      id: user.id,
+      email: user.email,
+      firstName: user.firstName,
+      lastName: user.lastName,
+    };
   }
 
   static async login(email: string, password: string) {

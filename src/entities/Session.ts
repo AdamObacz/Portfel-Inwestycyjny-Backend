@@ -1,6 +1,15 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, ManyToOne, JoinColumn } from "typeorm";
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  ManyToOne,
+  JoinColumn,
+} from "typeorm";
 import { User } from "./User";
 
+//Przepinka na redisa całkowicie, PSG ma ten problem, że  manualnie rekord się nie usunie. Dlatego trzymanie sesji w bazie
+//danych zadziała, ale long term jest nieoptymalne. No chyba, że to NoSQL albo ma automatyczne czyszczenie dobrze zrobione
 @Entity("sessions")
 export class Session {
   @PrimaryGeneratedColumn("uuid")
@@ -19,6 +28,6 @@ export class Session {
   @Column({ type: "timestamp" })
   expiresAt: Date;
 
-  @CreateDateColumn()
+  @CreateDateColumn({ type: "timestamp", default: () => "CURRENT_TIMESTAMP" })
   createdAt: Date;
 }

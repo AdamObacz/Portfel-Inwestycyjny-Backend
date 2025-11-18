@@ -1,6 +1,14 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, Index } from "typeorm";
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+  Index,
+} from "typeorm";
 
 @Entity("users")
+//Zamiast tego, możesz dać po prostu {unique: true} w Columnie, ale tak jest czytelniej.
 @Index(["email"], { unique: true })
 export class User {
   @PrimaryGeneratedColumn("uuid")
@@ -24,9 +32,13 @@ export class User {
   @Column({ type: "varchar", nullable: true })
   verificationToken: string;
 
-  @CreateDateColumn()
+  @CreateDateColumn({ type: "timestamp", default: () => "CURRENT_TIMESTAMP" })
   createdAt: Date;
 
-  @UpdateDateColumn()
+  @UpdateDateColumn({
+    type: "timestamp",
+    default: () => "CURRENT_TIMESTAMP",
+    onUpdate: "CURRENT_TIMESTAMP",
+  })
   updatedAt: Date;
 }
