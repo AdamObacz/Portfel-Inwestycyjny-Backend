@@ -1,5 +1,7 @@
 import HyperExpress from "hyper-express";
-import AuthService from "../services/AuthService";
+import * as AuthService from "../services/AuthService";
+import { validate } from "../middlewares/validate";
+import { registerSchema, loginSchema } from "../dto/auth.dto";
 
 const router = new HyperExpress.Router();
 
@@ -12,20 +14,11 @@ function requireAuth(req: any) {
 }
 
 // POST /auth/register
-router.post("/register", async (req: any, res: any) => {
+router.post("/register", validate({ body: registerSchema }), async (req: any, res: any) => {
   try {
-    const { email, password, firstName, lastName } = req.body;
+    const { email, password, firstName, lastName } = req.locals.validatedData;
 
-    if (!email || !password) {
-      return res.status(400).json({ error: "Email and password are required" });
-    }
-
-    const user = await AuthService.register(
-      email,
-      password,
-      firstName,
-      lastName
-    );
+    const user = await AuthService.register(email, password, firstName, lastName);
 
     // Set session
     if (req.session) {
@@ -49,15 +42,9 @@ router.post("/register", async (req: any, res: any) => {
 });
 
 // POST /auth/login
-router.post("/login", async (req: any, res: any) => {
+router.post("/login", validate({ body: loginSchema }), async (req: any, res: any) => {
   try {
-    //Doinstlauj sobię biblioteke do walidacji i DTO. Na przykład zod. Ogólnie zoda polecam bo ma wszystko czego będziesz potrzebował.
-    //Wtedy zamiast walidować tutaj (potem będzie tego więcej) to zrobisz DTO i wrzucisz to do zoda, on Ci zwróci błąd jak coś nie będzie pasowało
-    const { email, password } = req.body;
-
-    if (!email || !password) {
-      return res.status(400).json({ error: "Email and password are required" });
-    }
+    const { email, password } = req.locals.validatedData;
 
     const user = await AuthService.login(email, password);
 

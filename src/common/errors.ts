@@ -9,6 +9,8 @@ export enum ErrorKeys {
 
   VALIDATION_ERROR = "validation_error",
   AUTH_FAIL = "auth_fail",
+  USER_ALREADY_EXISTS = "user_already_exists",
+  INVALID_CREDENTIALS = "invalid_credentials",
 }
 
 export enum ErrorCodes {

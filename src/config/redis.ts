@@ -5,17 +5,27 @@ export const redisClient = new Redis({
   port: parseInt(process.env.REDIS_PORT || "6379", 10),
   password: process.env.REDIS_PASSWORD,
   db: 0,
-
-  //Mozna dodac reconnectOnError funkcje i retryStragety funkcje. Dodatkowo connectTimeout bo bez tego chyba Ci się aplikacja zawiesi
-  //Jak redis nie jest podłączony
+  retryStrategy(times) {
+    // Stop retrying after 3 attempts
+    if (times > 3) {
+      return null;
+    }
+    return Math.min(times * 1000, 3000);
+  },
 });
+
+let errorLogged = false;
 
 redisClient.on("connect", () => {
   console.log("✓ Redis connected");
+  errorLogged = false; // Reset flag when connected
 });
 
 redisClient.on("error", (err) => {
-  console.error("✗ Redis error:", err);
+  if (!errorLogged) {
+    console.error("✗ Redis error:", err.message);
+    errorLogged = true; // Log only once
+  }
 });
 
 export default redisClient;
