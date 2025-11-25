@@ -9,37 +9,42 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Session = void 0;
+exports.PortfolioSnapshot = void 0;
 const typeorm_1 = require("typeorm");
 const User_1 = require("./User");
-let Session = class Session {
+let PortfolioSnapshot = class PortfolioSnapshot {
 };
-exports.Session = Session;
+exports.PortfolioSnapshot = PortfolioSnapshot;
 __decorate([
     (0, typeorm_1.PrimaryGeneratedColumn)("uuid"),
     __metadata("design:type", String)
-], Session.prototype, "id", void 0);
+], PortfolioSnapshot.prototype, "id", void 0);
 __decorate([
     (0, typeorm_1.Column)({ type: "uuid" }),
     __metadata("design:type", String)
-], Session.prototype, "userId", void 0);
+], PortfolioSnapshot.prototype, "userId", void 0);
 __decorate([
-    (0, typeorm_1.ManyToOne)(() => User_1.User),
+    (0, typeorm_1.ManyToOne)(() => User_1.User, { onDelete: "CASCADE" }),
     (0, typeorm_1.JoinColumn)({ name: "userId" }),
     __metadata("design:type", User_1.User)
-], Session.prototype, "user", void 0);
+], PortfolioSnapshot.prototype, "user", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ type: "text" }),
-    __metadata("design:type", String)
-], Session.prototype, "token", void 0);
-__decorate([
-    (0, typeorm_1.Column)({ type: "timestamp" }),
+    (0, typeorm_1.Column)({ type: "date" }),
     __metadata("design:type", Date)
-], Session.prototype, "expiresAt", void 0);
+], PortfolioSnapshot.prototype, "snapshotDate", void 0);
 __decorate([
-    (0, typeorm_1.CreateDateColumn)(),
+    (0, typeorm_1.Column)({ type: "decimal", precision: 20, scale: 2 }),
+    __metadata("design:type", Number)
+], PortfolioSnapshot.prototype, "totalValue", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: "jsonb" }),
+    __metadata("design:type", Array)
+], PortfolioSnapshot.prototype, "breakdown", void 0);
+__decorate([
+    (0, typeorm_1.CreateDateColumn)({ type: "timestamp", default: () => "CURRENT_TIMESTAMP" }),
     __metadata("design:type", Date)
-], Session.prototype, "createdAt", void 0);
-exports.Session = Session = __decorate([
-    (0, typeorm_1.Entity)("sessions")
-], Session);
+], PortfolioSnapshot.prototype, "createdAt", void 0);
+exports.PortfolioSnapshot = PortfolioSnapshot = __decorate([
+    (0, typeorm_1.Entity)("portfolio_snapshots"),
+    (0, typeorm_1.Index)(["userId", "snapshotDate"])
+], PortfolioSnapshot);

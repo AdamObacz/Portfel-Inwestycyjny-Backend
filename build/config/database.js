@@ -2,8 +2,6 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AppDataSource = void 0;
 const typeorm_1 = require("typeorm");
-const User_1 = require("../entities/User");
-const Session_1 = require("../entities/Session");
 exports.AppDataSource = new typeorm_1.DataSource({
     type: "postgres",
     host: process.env.DB_HOST || "localhost",
@@ -13,8 +11,8 @@ exports.AppDataSource = new typeorm_1.DataSource({
     database: process.env.DB_NAME || "portfolio_db",
     synchronize: process.env.NODE_ENV === "development",
     logging: false,
-    entities: [User_1.User, Session_1.Session],
-    migrations: ["src/migrations/*.ts"],
+    entities: process.env.NODE_ENV === "production" ? ["build/entities/*.js"] : ["src/entities/*.ts"],
+    migrations: process.env.NODE_ENV === "production" ? ["build/migrations/*.js"] : ["src/migrations/*.ts"],
     subscribers: [],
 });
 exports.AppDataSource.initialize()

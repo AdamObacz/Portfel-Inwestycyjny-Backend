@@ -1,4 +1,37 @@
 "use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || (function () {
+    var ownKeys = function(o) {
+        ownKeys = Object.getOwnPropertyNames || function (o) {
+            var ar = [];
+            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
+            return ar;
+        };
+        return ownKeys(o);
+    };
+    return function (mod) {
+        if (mod && mod.__esModule) return mod;
+        var result = {};
+        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
+        __setModuleDefault(result, mod);
+        return result;
+    };
+})();
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -13,7 +46,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const hyper_express_1 = __importDefault(require("hyper-express"));
-const AuthService_1 = __importDefault(require("../services/AuthService"));
+const AuthService = __importStar(require("../services/AuthService"));
+const validate_1 = require("../middlewares/validate");
+const auth_dto_1 = require("../dto/auth.dto");
 const router = new hyper_express_1.default.Router();
 // Middleware to check if user is authenticated
 function requireAuth(req) {
@@ -23,13 +58,10 @@ function requireAuth(req) {
     return true;
 }
 // POST /auth/register
-router.post("/register", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.post("/register", (0, validate_1.validate)({ body: auth_dto_1.registerSchema }), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { email, password, firstName, lastName } = req.body;
-        if (!email || !password) {
-            return res.status(400).json({ error: "Email and password are required" });
-        }
-        const user = yield AuthService_1.default.register(email, password, firstName, lastName);
+        const { email, password, firstName, lastName } = req.locals.validatedData;
+        const user = yield AuthService.register(email, password, firstName, lastName);
         // Set session
         if (req.session) {
             req.session.userId = user.id;
@@ -53,13 +85,10 @@ router.post("/register", (req, res) => __awaiter(void 0, void 0, void 0, functio
     }
 }));
 // POST /auth/login
-router.post("/login", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.post("/login", (0, validate_1.validate)({ body: auth_dto_1.loginSchema }), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { email, password } = req.body;
-        if (!email || !password) {
-            return res.status(400).json({ error: "Email and password are required" });
-        }
-        const user = yield AuthService_1.default.login(email, password);
+        const { email, password } = req.locals.validatedData;
+        const user = yield AuthService.login(email, password);
         // Set session
         if (req.session) {
             req.session.userId = user.id;
@@ -89,7 +118,7 @@ router.get("/me", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             return res.status(401).json({ error: "Not authenticated" });
         }
         const userId = req.session.userId;
-        const user = yield AuthService_1.default.getUserById(userId);
+        const user = yield AuthService.getUserById(userId);
         if (!user) {
             return res.status(404).json({ error: "User not found" });
         }

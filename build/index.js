@@ -19,6 +19,7 @@ const handle_error_1 = require("./middlewares/handle-error");
 const session_1 = __importDefault(require("./middlewares/session"));
 const cookie_parser_1 = __importDefault(require("./middlewares/cookie-parser"));
 require("./config/database"); // Initialize database
+const cron_1 = require("./config/cron"); // Initialize cron jobs
 const webserver = new hyper_express_1.default.Server({ max_body_length: 1024 * 1024 * 3 });
 const allowedOrigins = ((_a = process.env.MAIN_ALLOWED_ORIGINS) === null || _a === void 0 ? void 0 : _a.split(",")) || [];
 console.log("Allowed Origins:", allowedOrigins);
@@ -47,3 +48,5 @@ const PORT = parseInt(process.env.MAIN_PORT, 10) || 8000;
 // Activate webserver by calling .listen(port, callback)
 webserver.listen(PORT);
 console.log(`Webserver is listening on port ${PORT}`);
+// Initialize cron jobs for daily snapshots
+(0, cron_1.initSnapshotCronJob)();

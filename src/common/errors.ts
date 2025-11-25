@@ -11,6 +11,17 @@ export enum ErrorKeys {
   AUTH_FAIL = "auth_fail",
   USER_ALREADY_EXISTS = "user_already_exists",
   INVALID_CREDENTIALS = "invalid_credentials",
+
+  // Portfolio & Assets
+  ASSET_NOT_FOUND = "asset_not_found",
+  PORTFOLIO_POSITION_NOT_FOUND = "portfolio_position_not_found",
+  PORTFOLIO_POSITION_ALREADY_EXISTS = "portfolio_position_already_exists",
+
+  // External API
+  EXTERNAL_API_ERROR = "external_api_error",
+
+  // Reports
+  INSUFFICIENT_DATA = "insufficient_data",
 }
 
 export enum ErrorCodes {
@@ -22,6 +33,7 @@ export enum ErrorCodes {
   FORBIDDEN = 403,
   NOT_FOUND = 404,
   CONFLICT = 409,
+  INTERNAL_ERROR = 500,
 }
 
 export class CustomError extends Error {

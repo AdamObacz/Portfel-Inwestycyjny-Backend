@@ -43,14 +43,20 @@ __decorate([
     __metadata("design:type", String)
 ], User.prototype, "verificationToken", void 0);
 __decorate([
-    (0, typeorm_1.CreateDateColumn)(),
+    (0, typeorm_1.CreateDateColumn)({ type: "timestamp", default: () => "CURRENT_TIMESTAMP" }),
     __metadata("design:type", Date)
 ], User.prototype, "createdAt", void 0);
 __decorate([
-    (0, typeorm_1.UpdateDateColumn)(),
+    (0, typeorm_1.UpdateDateColumn)({
+        type: "timestamp",
+        default: () => "CURRENT_TIMESTAMP",
+        onUpdate: "CURRENT_TIMESTAMP",
+    }),
     __metadata("design:type", Date)
 ], User.prototype, "updatedAt", void 0);
 exports.User = User = __decorate([
-    (0, typeorm_1.Entity)("users"),
+    (0, typeorm_1.Entity)("users")
+    //Zamiast tego, możesz dać po prostu {unique: true} w Columnie, ale tak jest czytelniej.
+    ,
     (0, typeorm_1.Index)(["email"], { unique: true })
 ], User);

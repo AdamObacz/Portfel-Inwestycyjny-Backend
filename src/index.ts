@@ -14,6 +14,7 @@ import { handleError } from "./middlewares/handle-error";
 import sessionMiddleware from "./middlewares/session";
 import cookieParserMiddleware from "./middlewares/cookie-parser";
 import "./config/database"; // Initialize database
+import { initSnapshotCronJob } from "./config/cron"; // Initialize cron jobs
 
 const webserver = new HyperExpress.Server({ max_body_length: 1024 * 1024 * 3 });
 
@@ -53,3 +54,6 @@ const PORT = parseInt(process.env.MAIN_PORT, 10) || 8000;
 // Activate webserver by calling .listen(port, callback)
 webserver.listen(PORT);
 console.log(`Webserver is listening on port ${PORT}`);
+
+// Initialize cron jobs for daily snapshots
+initSnapshotCronJob();
