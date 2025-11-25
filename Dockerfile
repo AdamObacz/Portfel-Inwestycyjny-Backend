@@ -1,36 +1,20 @@
-# Build stage
-FROM node:20-alpine AS builder
 
+FROM node:22-alpine
+
+RUN apk add --no-cache libc6-compat
+RUN apk add --no-cache git
 WORKDIR /app
 
-# Copy package files
-COPY package*.json ./
+COPY package.json ./
 
-# Install dependencies
-RUN npm ci
+RUN npm i
 
-# Copy source code
+
+WORKDIR /app
 COPY . .
 
-# Build TypeScript
 RUN npm run build
 
-# Production stage
-FROM node:20-alpine
-
-WORKDIR /app
-
-# Copy package files
-COPY package*.json ./
-
-# Install only production dependencies
-RUN npm ci --only=production
-
-# Copy built files from builder
-COPY --from=builder /app/build ./build
-
-# Expose port
 EXPOSE 8000
 
-# Start application
-CMD ["npm", "start"]
+CMD ["npm", "run","start"]

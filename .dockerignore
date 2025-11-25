@@ -1,15 +1,2 @@
-node_modules
-npm-debug.log
-.env
-.env.local
-.git
-.gitignore
-.vscode
-.idea
-*.md
-build
-dist
-.venv
-__pycache__
-*.pyc
-.DS_Store
+**/node_modules/
+node_modules/
