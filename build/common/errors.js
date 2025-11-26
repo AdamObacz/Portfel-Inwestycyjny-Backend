@@ -17,6 +17,8 @@ var ErrorKeys;
     ErrorKeys["ASSET_NOT_FOUND"] = "asset_not_found";
     ErrorKeys["PORTFOLIO_POSITION_NOT_FOUND"] = "portfolio_position_not_found";
     ErrorKeys["PORTFOLIO_POSITION_ALREADY_EXISTS"] = "portfolio_position_already_exists";
+    // Transactions
+    ErrorKeys["TRANSACTION_NOT_FOUND"] = "transaction_not_found";
     // External API
     ErrorKeys["EXTERNAL_API_ERROR"] = "external_api_error";
     // Reports

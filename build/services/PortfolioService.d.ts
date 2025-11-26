@@ -2,7 +2,7 @@ import { Portfolio } from "../entities/Portfolio";
 /**
  * Add asset to user's portfolio
  */
-export declare function addToPortfolio(userId: string, assetId: string, quantity: number, purchasePrice: number): Promise<Portfolio>;
+export declare function addToPortfolio(userId: string, assetId: string, quantity: number, purchasePrice: number, createTransaction?: boolean): Promise<Portfolio>;
 /**
  * Get user's entire portfolio with current prices
  */
@@ -36,7 +36,7 @@ export declare function updatePosition(userId: string, positionId: string, quant
 /**
  * Remove asset from portfolio
  */
-export declare function removeFromPortfolio(userId: string, positionId: string): Promise<{
+export declare function removeFromPortfolio(userId: string, positionId: string, createTransaction?: boolean): Promise<{
     message: string;
 }>;
 /**

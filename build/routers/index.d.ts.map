@@ -1,1 +1,1 @@
-{"version":3,"file":"index.d.ts","sourceRoot":"","sources":["../../src/routers/index.ts"],"names":[],"mappings":"AAAA,OAAO,YAAY,MAAM,eAAe,CAAC;AAMzC,wBAAgB,cAAc,CAAC,GAAG,EAAE,YAAY,CAAC,MAAM,QAKtD"}
+{"version":3,"file":"index.d.ts","sourceRoot":"","sources":["../../src/routers/index.ts"],"names":[],"mappings":"AAAA,OAAO,YAAY,MAAM,eAAe,CAAC;AAQzC,wBAAgB,cAAc,CAAC,GAAG,EAAE,YAAY,CAAC,MAAM,QAOtD"}

@@ -149,4 +149,26 @@ router.post("/snapshot", (req, res) => __awaiter(void 0, void 0, void 0, functio
         });
     }
 }));
+/**
+ * GET /reports/metrics?days=30
+ * Get advanced portfolio metrics (volatility, Sharpe ratio, max drawdown, annual return)
+ */
+router.get("/metrics", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const userId = req.session.userId;
+        const days = parseInt(req.query.days || "30", 10);
+        const metrics = yield ReportService.getAdvancedMetrics(userId, days);
+        return res.status(200).json({
+            success: true,
+            data: metrics,
+        });
+    }
+    catch (error) {
+        console.error("Get advanced metrics error:", error.message);
+        return res.status(error.statusCode || 500).json({
+            error: error.message,
+            errorKey: error.errorKey || "internal_server_error",
+        });
+    }
+}));
 exports.default = router;

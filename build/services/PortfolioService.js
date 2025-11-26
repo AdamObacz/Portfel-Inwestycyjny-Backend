@@ -51,12 +51,13 @@ const database_1 = require("../config/database");
 const Portfolio_1 = require("../entities/Portfolio");
 const errors_1 = require("../common/errors");
 const CryptoApiService = __importStar(require("./CryptoApiService"));
+const TransactionService = __importStar(require("./TransactionService"));
 const portfolioRepository = database_1.AppDataSource.getRepository(Portfolio_1.Portfolio);
 /**
  * Add asset to user's portfolio
  */
-function addToPortfolio(userId, assetId, quantity, purchasePrice) {
-    return __awaiter(this, void 0, void 0, function* () {
+function addToPortfolio(userId_1, assetId_1, quantity_1, purchasePrice_1) {
+    return __awaiter(this, arguments, void 0, function* (userId, assetId, quantity, purchasePrice, createTransaction = true) {
         // Verify asset exists
         const asset = yield CryptoApiService.getAssetById(assetId);
         // Check if position already exists
@@ -71,6 +72,10 @@ function addToPortfolio(userId, assetId, quantity, purchasePrice) {
             existingPosition.quantity = totalQuantity;
             existingPosition.averagePurchasePrice = newAveragePrice;
             yield portfolioRepository.save(existingPosition);
+            // Create transaction record
+            if (createTransaction) {
+                yield TransactionService.createTransaction(userId, assetId, "buy", quantity, purchasePrice, "Added to portfolio");
+            }
             return existingPosition;
         }
         // Create new position
@@ -81,6 +86,10 @@ function addToPortfolio(userId, assetId, quantity, purchasePrice) {
             averagePurchasePrice: purchasePrice,
         });
         yield portfolioRepository.save(position);
+        // Create transaction record
+        if (createTransaction) {
+            yield TransactionService.createTransaction(userId, assetId, "buy", quantity, purchasePrice, "Added to portfolio");
+        }
         return position;
     });
 }
@@ -171,13 +180,20 @@ function updatePosition(userId, positionId, quantity, purchasePrice) {
 /**
  * Remove asset from portfolio
  */
-function removeFromPortfolio(userId, positionId) {
-    return __awaiter(this, void 0, void 0, function* () {
+function removeFromPortfolio(userId_1, positionId_1) {
+    return __awaiter(this, arguments, void 0, function* (userId, positionId, createTransaction = true) {
         const position = yield portfolioRepository.findOne({
             where: { id: positionId, userId },
+            relations: ["asset"],
         });
         if (!position) {
             throw new errors_1.CustomError(errors_1.ErrorCodes.NOT_FOUND, errors_1.ErrorKeys.PORTFOLIO_POSITION_NOT_FOUND, "Portfolio position not found");
+        }
+        // Get current price for transaction record
+        if (createTransaction) {
+            const currentPrices = yield CryptoApiService.getCurrentPrices([position.asset.apiId]);
+            const currentPrice = currentPrices[position.asset.apiId] || 0;
+            yield TransactionService.createTransaction(userId, position.assetId, "sell", Number(position.quantity), currentPrice, "Removed from portfolio");
         }
         yield portfolioRepository.remove(position);
         return { message: "Position removed successfully" };

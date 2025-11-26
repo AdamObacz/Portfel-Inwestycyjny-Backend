@@ -12,6 +12,7 @@ export declare enum ErrorKeys {
     ASSET_NOT_FOUND = "asset_not_found",
     PORTFOLIO_POSITION_NOT_FOUND = "portfolio_position_not_found",
     PORTFOLIO_POSITION_ALREADY_EXISTS = "portfolio_position_already_exists",
+    TRANSACTION_NOT_FOUND = "transaction_not_found",
     EXTERNAL_API_ERROR = "external_api_error",
     INSUFFICIENT_DATA = "insufficient_data"
 }

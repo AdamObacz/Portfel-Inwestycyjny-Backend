@@ -112,4 +112,28 @@ router.post("/snapshot", async (req: any, res: any) => {
   }
 });
 
+/**
+ * GET /reports/metrics?days=30
+ * Get advanced portfolio metrics (volatility, Sharpe ratio, max drawdown, annual return)
+ */
+router.get("/metrics", async (req: any, res: any) => {
+  try {
+    const userId = req.session.userId;
+    const days = parseInt(req.query.days || "30", 10);
+
+    const metrics = await ReportService.getAdvancedMetrics(userId, days);
+
+    return res.status(200).json({
+      success: true,
+      data: metrics,
+    });
+  } catch (error: any) {
+    console.error("Get advanced metrics error:", error.message);
+    return res.status(error.statusCode || 500).json({
+      error: error.message,
+      errorKey: error.errorKey || "internal_server_error",
+    });
+  }
+});
+
 export default router;

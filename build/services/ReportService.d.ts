@@ -84,12 +84,44 @@ export declare function getUserSnapshots(userId: string, limit?: number): Promis
         value: number;
     }[];
 }[]>;
+/**
+ * Calculate portfolio volatility (standard deviation of daily returns)
+ */
+export declare function calculateVolatility(userId: string, days?: number): Promise<number>;
+/**
+ * Calculate Sharpe Ratio (risk-adjusted return)
+ * Assumes risk-free rate of 2% annually
+ */
+export declare function calculateSharpeRatio(userId: string, days?: number, riskFreeRate?: number): Promise<number>;
+/**
+ * Calculate Maximum Drawdown (largest peak-to-trough decline)
+ */
+export declare function calculateMaxDrawdown(userId: string, days?: number): Promise<number>;
+/**
+ * Calculate annualized return
+ */
+export declare function calculateAnnualReturn(userId: string, days?: number): Promise<number>;
+/**
+ * Get advanced portfolio metrics
+ */
+export declare function getAdvancedMetrics(userId: string, days?: number): Promise<{
+    period: number;
+    volatility: number;
+    sharpeRatio: number;
+    maxDrawdown: number;
+    annualReturn: number;
+}>;
 declare const _default: {
     createSnapshot: typeof createSnapshot;
     getDailyReport: typeof getDailyReport;
     getMonthlyReport: typeof getMonthlyReport;
     getPerformanceReport: typeof getPerformanceReport;
     getUserSnapshots: typeof getUserSnapshots;
+    calculateVolatility: typeof calculateVolatility;
+    calculateSharpeRatio: typeof calculateSharpeRatio;
+    calculateMaxDrawdown: typeof calculateMaxDrawdown;
+    calculateAnnualReturn: typeof calculateAnnualReturn;
+    getAdvancedMetrics: typeof getAdvancedMetrics;
 };
 export default _default;
 //# sourceMappingURL=ReportService.d.ts.map
