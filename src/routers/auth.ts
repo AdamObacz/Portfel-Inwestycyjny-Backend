@@ -14,60 +14,74 @@ function requireAuth(req: any) {
 }
 
 // POST /auth/register
-router.post("/register", validate({ body: registerSchema }), async (req: any, res: any) => {
-  try {
-    const { email, password, firstName, lastName } = req.locals.validatedData;
+router.post(
+  "/register",
+  validate({ body: registerSchema }),
+  async (req: any, res: any) => {
+    try {
+      const { email, password, firstName, lastName } = req.locals.validatedData;
 
-    const user = await AuthService.register(email, password, firstName, lastName);
+      const user = await AuthService.register(
+        email,
+        password,
+        firstName,
+        lastName
+      );
 
-    // Set session
-    if (req.session) {
-      req.session.userId = user.id;
-      await new Promise<void>((resolve, reject) => {
-        req.session.save((err: any) => {
-          if (err) reject(err);
-          else resolve();
+      // Set session
+      if (req.session) {
+        req.session.userId = user.id;
+        await new Promise<void>((resolve, reject) => {
+          req.session.save((err: any) => {
+            if (err) reject(err);
+            else resolve();
+          });
         });
-      });
-    }
+      }
 
-    return res.status(201).json({
-      message: "User registered successfully",
-      user,
-    });
-  } catch (error: any) {
-    console.error("Register error:", error.message);
-    return res.status(400).json({ error: error.message });
+      return res.status(201).json({
+        message: "User registered successfully",
+        user,
+      });
+    } catch (error: any) {
+      console.error("Register error:", error.message);
+      return res.status(400).json({ error: error.message });
+    }
   }
-});
+);
 
 // POST /auth/login
-router.post("/login", validate({ body: loginSchema }), async (req: any, res: any) => {
-  try {
-    const { email, password } = req.locals.validatedData;
+router.post(
+  "/login",
+  validate({ body: loginSchema }),
+  async (req: any, res: any) => {
+    console.log("Login request received");
+    try {
+      const { email, password } = req.locals.validatedData;
 
-    const user = await AuthService.login(email, password);
+      const user = await AuthService.login(email, password);
 
-    // Set session
-    if (req.session) {
-      req.session.userId = user.id;
-      await new Promise<void>((resolve, reject) => {
-        req.session.save((err: any) => {
-          if (err) reject(err);
-          else resolve();
+      // Set session
+      if (req.session) {
+        req.session.userId = user.id;
+        await new Promise<void>((resolve, reject) => {
+          req.session.save((err: any) => {
+            if (err) reject(err);
+            else resolve();
+          });
         });
-      });
-    }
+      }
 
-    return res.status(200).json({
-      message: "Logged in successfully",
-      user,
-    });
-  } catch (error: any) {
-    console.error("Login error:", error.message);
-    return res.status(401).json({ error: error.message });
+      return res.status(200).json({
+        message: "Logged in successfully",
+        user,
+      });
+    } catch (error: any) {
+      console.error("Login error:", error.message);
+      return res.status(401).json({ error: error.message });
+    }
   }
-});
+);
 
 // GET /auth/me - Get current user
 router.get("/me", async (req: any, res: any) => {

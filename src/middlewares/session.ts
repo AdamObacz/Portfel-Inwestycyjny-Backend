@@ -12,6 +12,7 @@ const store = new RedisStore({
 // Fallback to MemoryStore if needed:
 // const store = new session.MemoryStore();
 
+//FIX: Do naprawy
 export const sessionMiddleware = session({
   store: store,
   secret: process.env.SESSION_SECRET || "your-secret-key-change-this",

@@ -6,6 +6,6 @@ export function handleError(err: any, _req: any, res: any) {
       res.status(500).send({ error: String(err) });
     }
   } catch (_) {
-    // swallow
+    res.status(500).send({ error: String(err) });
   }
 }

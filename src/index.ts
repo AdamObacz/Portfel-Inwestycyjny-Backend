@@ -35,7 +35,7 @@ webserver.use(
 
 // Apply middleware
 webserver.use(cookieParserMiddleware);
-webserver.use(sessionMiddleware);
+// webserver.use(sessionMiddleware);
 
 // webserver.use(i18nMiddleware);
 
