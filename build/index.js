@@ -46,7 +46,22 @@ webserver.set_error_handler(handle_error_1.handleError);
 // }
 const PORT = parseInt(process.env.MAIN_PORT, 10) || 8000;
 // Activate webserver by calling .listen(port, callback)
-webserver.listen(PORT);
-console.log(`Webserver is listening on port ${PORT}`);
+webserver.listen(PORT)
+    .then(() => {
+    console.log(`Webserver is listening on port ${PORT}`);
+})
+    .catch((error) => {
+    console.error('Failed to start webserver:', error);
+    process.exit(1);
+});
 // Initialize cron jobs for daily snapshots
 (0, cron_1.initSnapshotCronJob)();
+// Keep process alive
+process.on('SIGTERM', () => {
+    console.log('SIGTERM signal received: closing server');
+    process.exit(0);
+});
+process.on('SIGINT', () => {
+    console.log('SIGINT signal received: closing server');
+    process.exit(0);
+});

@@ -51,9 +51,44 @@ webserver.set_error_handler(handleError);
 // }
 
 const PORT = parseInt(process.env.MAIN_PORT, 10) || 8000;
+
 // Activate webserver by calling .listen(port, callback)
-webserver.listen(PORT);
-console.log(`Webserver is listening on port ${PORT}`);
+webserver.listen(PORT)
+  .then(() => {
+    console.log(`✓ Webserver is listening on port ${PORT}`);
+  })
+  .catch((error) => {
+    console.error('Failed to start webserver:', error);
+    process.exit(1);
+  });
 
 // Initialize cron jobs for daily snapshots
 initSnapshotCronJob();
+
+// Keep process alive and handle graceful shutdown
+process.on('SIGTERM', () => {
+  console.log('SIGTERM received, shutting down gracefully...');
+  webserver.close(() => {
+    console.log('Server closed');
+    process.exit(0);
+  });
+});
+
+process.on('SIGINT', () => {
+  console.log('SIGINT received, shutting down gracefully...');
+  webserver.close(() => {
+    console.log('Server closed');
+    process.exit(0);
+  });
+});
+
+process.on('uncaughtException', (error) => {
+  console.error('Uncaught Exception:', error);
+  process.exit(1);
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('Unhandled Rejection at:', promise, 'reason:', reason);
+  process.exit(1);
+});
+

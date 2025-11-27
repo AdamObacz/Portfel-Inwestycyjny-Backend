@@ -47,15 +47,17 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const hyper_express_1 = __importDefault(require("hyper-express"));
 const TransactionService = __importStar(require("../services/TransactionService"));
-const requireAuth_1 = __importDefault(require("../middlewares/requireAuth"));
+const requireAuth_1 = require("../middlewares/requireAuth");
 const validate_1 = require("../middlewares/validate");
 const transaction_dto_1 = require("../dto/transaction.dto");
 const router = new hyper_express_1.default.Router();
+// All routes require authentication
+router.use(requireAuth_1.requireAuth);
 /**
  * Create a new transaction
  * POST /api/transactions
  */
-router.post("/", requireAuth_1.default, (0, validate_1.validate)({ body: transaction_dto_1.createTransactionSchema }), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.post("/", (0, validate_1.validate)({ body: transaction_dto_1.createTransactionSchema }), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const userId = req.session.userId;
     const { assetId, type, quantity, price, note } = req.body;
     const transaction = yield TransactionService.createTransaction(userId, assetId, type, quantity, price, note);
@@ -68,7 +70,7 @@ router.post("/", requireAuth_1.default, (0, validate_1.validate)({ body: transac
  * Get all transactions with optional filters
  * GET /api/transactions?type=buy&assetId=xxx&limit=20&offset=0
  */
-router.get("/", requireAuth_1.default, (0, validate_1.validate)({ query: transaction_dto_1.transactionFilterSchema }), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.get("/", (0, validate_1.validate)({ query: transaction_dto_1.transactionFilterSchema }), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const userId = req.session.userId;
     const { type, assetId, limit, offset } = req.query;
     const transactions = yield TransactionService.getUserTransactions(userId, {
@@ -86,7 +88,7 @@ router.get("/", requireAuth_1.default, (0, validate_1.validate)({ query: transac
  * Get recent transactions (last 10)
  * GET /api/transactions/recent?limit=10
  */
-router.get("/recent", requireAuth_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.get("/recent", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const userId = req.session.userId;
     const limit = req.query.limit ? Number(req.query.limit) : 10;
     const transactions = yield TransactionService.getRecentTransactions(userId, limit);
@@ -99,7 +101,7 @@ router.get("/recent", requireAuth_1.default, (req, res) => __awaiter(void 0, voi
  * Get transaction summary
  * GET /api/transactions/summary
  */
-router.get("/summary", requireAuth_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.get("/summary", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const userId = req.session.userId;
     const summary = yield TransactionService.getTransactionSummary(userId);
     return res.json({
@@ -111,7 +113,7 @@ router.get("/summary", requireAuth_1.default, (req, res) => __awaiter(void 0, vo
  * Get single transaction by ID
  * GET /api/transactions/:id
  */
-router.get("/:id", requireAuth_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.get("/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const userId = req.session.userId;
     const { id } = req.path_parameters;
     const transaction = yield TransactionService.getTransactionById(userId, id);
@@ -124,7 +126,7 @@ router.get("/:id", requireAuth_1.default, (req, res) => __awaiter(void 0, void 0
  * Delete transaction
  * DELETE /api/transactions/:id
  */
-router.delete("/:id", requireAuth_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.delete("/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const userId = req.session.userId;
     const { id } = req.path_parameters;
     const result = yield TransactionService.deleteTransaction(userId, id);
