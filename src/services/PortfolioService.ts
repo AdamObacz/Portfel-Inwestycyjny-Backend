@@ -3,13 +3,14 @@ import { Portfolio } from "../entities/Portfolio";
 import { Asset } from "../entities/Asset";
 import { CustomError, ErrorCodes, ErrorKeys } from "../common/errors";
 import * as CryptoApiService from "./CryptoApiService";
+import * as TransactionService from "./TransactionService";
 
 const portfolioRepository = AppDataSource.getRepository(Portfolio);
 
 /**
  * Add asset to user's portfolio
  */
-export async function addToPortfolio(userId: string, assetId: string, quantity: number, purchasePrice: number) {
+export async function addToPortfolio(userId: string, assetId: string, quantity: number, purchasePrice: number, createTransaction: boolean = true) {
   // Verify asset exists
   const asset = await CryptoApiService.getAssetById(assetId);
 
@@ -28,6 +29,12 @@ export async function addToPortfolio(userId: string, assetId: string, quantity: 
     existingPosition.averagePurchasePrice = newAveragePrice;
 
     await portfolioRepository.save(existingPosition);
+
+    // Create transaction record
+    if (createTransaction) {
+      await TransactionService.createTransaction(userId, assetId, "buy", quantity, purchasePrice, "Added to portfolio");
+    }
+
     return existingPosition;
   }
 
@@ -40,6 +47,12 @@ export async function addToPortfolio(userId: string, assetId: string, quantity: 
   });
 
   await portfolioRepository.save(position);
+
+  // Create transaction record
+  if (createTransaction) {
+    await TransactionService.createTransaction(userId, assetId, "buy", quantity, purchasePrice, "Added to portfolio");
+  }
+
   return position;
 }
 
@@ -141,13 +154,22 @@ export async function updatePosition(userId: string, positionId: string, quantit
 /**
  * Remove asset from portfolio
  */
-export async function removeFromPortfolio(userId: string, positionId: string) {
+export async function removeFromPortfolio(userId: string, positionId: string, createTransaction: boolean = true) {
   const position = await portfolioRepository.findOne({
     where: { id: positionId, userId },
+    relations: ["asset"],
   });
 
   if (!position) {
     throw new CustomError(ErrorCodes.NOT_FOUND, ErrorKeys.PORTFOLIO_POSITION_NOT_FOUND, "Portfolio position not found");
+  }
+
+  // Get current price for transaction record
+  if (createTransaction) {
+    const currentPrices = await CryptoApiService.getCurrentPrices([position.asset.apiId]);
+    const currentPrice = currentPrices[position.asset.apiId] || 0;
+
+    await TransactionService.createTransaction(userId, position.assetId, "sell", Number(position.quantity), currentPrice, "Removed from portfolio");
   }
 
   await portfolioRepository.remove(position);

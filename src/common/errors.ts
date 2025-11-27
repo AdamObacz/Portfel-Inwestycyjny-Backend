@@ -17,6 +17,9 @@ export enum ErrorKeys {
   PORTFOLIO_POSITION_NOT_FOUND = "portfolio_position_not_found",
   PORTFOLIO_POSITION_ALREADY_EXISTS = "portfolio_position_already_exists",
 
+  // Transactions
+  TRANSACTION_NOT_FOUND = "transaction_not_found",
+
   // External API
   EXTERNAL_API_ERROR = "external_api_error",
 
